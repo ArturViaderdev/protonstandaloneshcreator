@@ -8,7 +8,7 @@ Debes indicar la ruta del contenedor playonlinux en el programa.
 
 Descargar una proton ge release y modificar el archivo proton py de acuerdo a las instrucciones contenidas en los comentarios del código. Puede variar un poco según la versión de proton pero si se conoce el lenguaje python es fácil de modificar.
 
-Se debe indicar la ruta del directorio con proton en el prograna.
+Se debe indicar la ruta del directorio con proton en el programa.
 
 Elegir un exe de juego en el programa. Se debe abrir este de la ruta carpeta personal/playonlinux virtual drives/nombre del contenedor/dosdevices/unidad con el juego.
 
