@@ -79,6 +79,8 @@ public class FrmMain extends javax.swing.JFrame {
         twinepath = new javax.swing.JTextField();
         bprotonpath = new javax.swing.JButton();
         bwinepath = new javax.swing.JButton();
+        cLibraries = new javax.swing.JComboBox<>();
+        cVrGame = new javax.swing.JCheckBox();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -123,16 +125,14 @@ public class FrmMain extends javax.swing.JFrame {
             }
         });
 
+        cLibraries.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Steam Libraries", "System Libraries" }));
+
+        cVrGame.setText("VR Game WiVRN");
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addGap(186, 186, 186)
-                .addComponent(bcancelar)
-                .addGap(48, 48, 48)
-                .addComponent(baceptar)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
@@ -154,6 +154,16 @@ public class FrmMain extends javax.swing.JFrame {
                     .addComponent(bprotonpath, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(bwinepath, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addGap(45, 45, 45))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addGap(186, 186, 186)
+                .addComponent(bcancelar)
+                .addGap(48, 48, 48)
+                .addComponent(baceptar)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(cVrGame)
+                    .addComponent(cLibraries, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(53, 53, 53))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -177,10 +187,17 @@ public class FrmMain extends javax.swing.JFrame {
                     .addComponent(jLabel1)
                     .addComponent(truta, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(barchivo))
-                .addGap(59, 59, 59)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(bcancelar)
-                    .addComponent(baceptar))
+                .addGap(18, 18, 18)
+                .addComponent(cLibraries, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(17, 17, 17)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(bcancelar)
+                            .addComponent(baceptar)))
+                    .addGroup(layout.createSequentialGroup()
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(cVrGame)))
                 .addContainerGap(24, Short.MAX_VALUE))
         );
 
@@ -207,52 +224,26 @@ public class FrmMain extends javax.swing.JFrame {
     private void baceptarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_baceptarActionPerformed
         rutaproton = tprotonpath.getText();
         rutawine = twinepath.getText();
+        String libraries;
+        if (cLibraries.getSelectedIndex() == 1) {
+            libraries = "export LD_LIBRARY_PATH=\"/usr/lib64/wine:/usr/lib32/wine:/usr/lib/x86_64-linux-gnu:/usr/lib/i386-linux-gnu\"";
+        } else {
+            libraries = "export LD_LIBRARY_PATH=\"$LD_LIBRARY_PATH:/home/$USER/$STEAM_HOME_DIR/ubuntu12_32/steam-runtime/pinned_libs_32:/home/$USER/$STEAM_HOME_DIR/ubuntu12_32/steam-runtime/pinned_libs_64:/usr/lib64/qt-3.3/lib:/usr/lib64/tcl8.6:/usr/lib/wine:/usr/lib64/wine:/lib:/lib64:/home/$USER/$STEAM_HOME_DIR/ubuntu12_32/steam-runtime/lib/i386-linux-gnu:/home/$USER/$STEAM_HOME_DIR/ubuntu12_32/steam-runtime/usr/lib/i386-linux-gnu:/home/$USER/$STEAM_HOME_DIR/ubuntu12_32/steam-runtime/lib/x86_64-linux-gnu:/home/$USER/$STEAM_HOME_DIR/ubuntu12_32/steam-runtime/usr/lib/x86_64-linux-gnu:/home/$USER/$STEAM_HOME_DIR/ubuntu12_32/steam-runtime/lib:/home/$USER/$STEAM_HOME_DIR/ubuntu12_32/steam-runtime/usr/lib:\"\n";
+        }
+        String vrgame;
+        if(cVrGame.isSelected())
+        {
+            vrgame="PRESSURE_VESSEL_IMPORT_OPENXR_1_RUNTIMES=1 ";
+        }
+        else
+        {
+            vrgame="";
+        }
         if (!rutajuego.isEmpty() && !nombrearchivo.isEmpty() && !rutaproton.isEmpty() && !rutawine.isEmpty()) {
             try {
                 // TODO add your handling code here:
                 FileWriter myWriter = new FileWriter(rutaproton + "/" + Metodos.quitaextension(nombrearchivo) + ".sh");
-                myWriter.write(" \n"
-                        + "#!/bin/bash\n"
-                        + "\n"
-                        + "# Created by 7oxicshadow (23/09/19)\n"
-                        + "# https://github.com/7oxicshadow/proton-standalone-script\n"
-                        + "\n"
-                        + "####################################################\n"
-                        + "####               Important                    ####\n"
-                        + "####################################################\n"
-                        + "\n"
-                        + "# This script has been tested with Proton GE but should in theory work with any proton version.\n"
-                        + "# https://github.com/GloriousEggroll/proton-ge-custom/releases\n"
-                        + "\n"
-                        + "# Before you can use this script you have to make 2 minor changes to the proton python file!\n"
-                        + "# Always make a backup before making changes :)\n"
-                        + "\n"
-                        + "# Note: Make sure you DO NOT make the changes below directly to your steam version of proton! Create a copy\n"
-                        + "#       of the proton folder or use a downloaded version of proton as the changes would stop steam games from loading.\n"
-                        + "\n"
-                        + "# 1: Open the proton python file in a text editor\n"
-                        + "# 2: Find the following line in the [def run(self)] section: \n"
-                        + "#    self.run_proc([g_proton.wine_bin, \"steam\"] + sys.argv[2:])\n"
-                        + "# 3: Change it to:\n"
-                        + "#    self.run_proc([g_proton.wine_bin] + sys.argv[2:])\n"
-                        + "# 4: Find the following line in the [class CompatData] section:\n"
-                        + "#    self.prefix_dir = self.path(\"pfx/\")\n"
-                        + "# 5: Change it to\n"
-                        + "#    self.prefix_dir = self.path(\"\")\n"
-                        + "# 6: Save the changes.\n"
-                        + "\n"
-                        + "# Put this script in the same folder as the proton python script.\n"
-                        + "\n"
-                        + "####################################################\n"
-                        + "####      Script starts here!                   ####\n"
-                        + "####################################################\n"
-                        + "\n"
-                        + "# Path to the proton file. This MUST be absolute as the proton script determines the working\n"
-                        + "# directory from this path. The $PWD assumes that this .sh file is being run from the same directory as\n"
-                        + "# the proton file. If you want to run the this script from anywhere, you need to change this to a Full\n"
-                        + "# path i.e PROTON=/path/to/files/proton\n"
-                        + "\n"
-                        + "PROTON=$PWD/proton\n"
+                myWriter.write("PROTON=$PWD/proton\n"
                         + "\n"
                         + "# Uncomment these options as required. Note: DXVK / D9VK is enabled by default and does not need any of the\n"
                         + "# options below\n"
@@ -269,39 +260,30 @@ public class FrmMain extends javax.swing.JFrame {
                         + "#export PROTON_FORCE_LARGE_ADDRESS_AWARE=\"1\"\n"
                         + "#export PROTON_OLD_GL_STRING=\"1\"\n"
                         + "\n"
-                        + "if grep -q ubuntu /etc/*-release; then\n"
-                        + "    STEAM_HOME_DIR=\".steam\"\n"
-                        + "    echo \"Using Ubuntu Steam Directory\"\n"
-                        + "else\n"
+                        + "if [ -d \"$HOME/.steam/steam/ubuntu12_32/steam-runtime\" ]; then\n"
+                        + "    STEAM_HOME_DIR=\".steam/steam\"\n"
+                        + "    echo \"Using Steam directory: $HOME/$STEAM_HOME_DIR\"\n"
+                        + "elif [ -d \"$HOME/.steam/debian-installation/ubuntu12_32/steam-runtime\" ]; then\n"
+                        + "    STEAM_HOME_DIR=\".steam/debian-installation\"\n"
+                        + "    echo \"Using Steam directory: $HOME/$STEAM_HOME_DIR\"\n"
+                        + "elif [ -d \"$HOME/.local/share/Steam/ubuntu12_32/steam-runtime\" ]; then\n"
                         + "    STEAM_HOME_DIR=\".local/share/Steam\"\n"
-                        + "    echo \"Using Redhat Steam Directory\"\n"
-                        + "fi\n"
+                        + "    echo \"Using Steam directory: $HOME/$STEAM_HOME_DIR\"\n"
+                        + "else\n"
+                        + "    echo \"Steam runtime not found\"\n"
+                        + "    exit 1\n"
+                        + "fi"
                         + "\n"
                         + "#These 4 exports are NOT required for Joypad support but they are set by Steam so there is no harm in having them set here\n"
                         + "export SDL_GAMECONTROLLERCONFIG=\"03000000de280000ff11000001000000,Steam Virtual Gamepad,a:b0,b:b1,back:b6,dpdown:h0.4,dpleft:h0.8,dpright:h0.2,dpup:h0.1,guide:b8,leftshoulder:b4,leftstick:b9,lefttrigger:a2,leftx:a0,lefty:a1,rightshoulder:b5,rightstick:b10,righttrigger:a5,rightx:a3,righty:a4,start:b7,x:b2,y:b3,03000000de280000fc11000001000000,Steam Controller,a:b0,b:b1,back:b6,dpdown:h0.4,dpleft:h0.8,dpright:h0.2,dpup:h0.1,guide:b8,leftshoulder:b4,leftstick:b9,lefttrigger:a2,leftx:a0,lefty:a1,rightshoulder:b5,rightstick:b10,righttrigger:a5,rightx:a3,righty:a4,start:b7,x:b2,y:b3,030000005e040000a102000007010000,X360 Wireless Controller,a:b0,b:b1,back:b6,dpdown:b14,dpleft:b11,dpright:b12,dpup:b13,guide:b8,leftshoulder:b4,leftstick:b9,lefttrigger:a2,leftx:a0,lefty:a1,rightshoulder:b5,rightstick:b10,righttrigger:a5,rightx:a3,righty:a4,start:b7,x:b2,y:b3,0000000058626f782047616d65706100,XInput Controller,a:b0,b:b1,back:b6,dpdown:h0.4,dpleft:h0.8,dpright:h0.2,dpup:h0.1,guide:b8,leftshoulder:b4,leftstick:b9,lefttrigger:a2,leftx:a0,lefty:a1,rightshoulder:b5,rightstick:b10,righttrigger:a5,rightx:a3,righty:a4,start:b7,x:b2,y:b3,030000005e0400008e02000010010000,X360 Controller,a:b0,b:b1,back:b6,dpdown:h0.4,dpleft:h0.8,dpright:h0.2,dpup:h0.1,guide:b8,leftshoulder:b4,leftstick:b9,lefttrigger:a2,leftx:a0,lefty:a1,rightshoulder:b5,rightstick:b10,righttrigger:a5,rightx:a3,righty:a4,start:b7,x:b2,y:b3,\"\n"
                         + "export SDL_GAMECONTROLLER_ALLOW_STEAM_VIRTUAL_GAMEPAD=\"1\"\n"
                         + "export SDL_GAMECONTROLLER_USE_BUTTON_LABELS=\"1\"\n"
                         + "export SDL_VIDEO_X11_DGAMOUSE=\"0\"\n"
-                        + "\n"
-                        + "#This export is VERY IMPORTANT. Controller support will not work without pointing to steam libs!!!!!!!!!\n"
-                        + "#This means that the native linux version of steam must be installed even though the script wont actually ever user it!!!!\n"
-                        + "export LD_LIBRARY_PATH=\"$LD_LIBRARY_PATH:/home/$USER/$STEAM_HOME_DIR/ubuntu12_32/steam-runtime/pinned_libs_32:/home/$USER/$STEAM_HOME_DIR/ubuntu12_32/steam-runtime/pinned_libs_64:/usr/lib64/qt-3.3/lib:/usr/lib64/tcl8.6:/usr/lib/wine:/usr/lib64/wine:/lib:/lib64:/home/$USER/$STEAM_HOME_DIR/ubuntu12_32/steam-runtime/lib/i386-linux-gnu:/home/$USER/$STEAM_HOME_DIR/ubuntu12_32/steam-runtime/usr/lib/i386-linux-gnu:/home/$USER/$STEAM_HOME_DIR/ubuntu12_32/steam-runtime/lib/x86_64-linux-gnu:/home/$USER/$STEAM_HOME_DIR/ubuntu12_32/steam-runtime/usr/lib/x86_64-linux-gnu:/home/$USER/$STEAM_HOME_DIR/ubuntu12_32/steam-runtime/lib:/home/$USER/$STEAM_HOME_DIR/ubuntu12_32/steam-runtime/usr/lib:\"\n"
-                        + "\n"
-                        + "# We need to manually set the environment variable for the game prefix so proton knows where the windows installation is.\n"
-                        + "# This needs to point the root prefix folder. (it will contain 2 folders [dosdevices and drive_c] aswell as the\n"
-                        + "# .reg files.\n"
+                        + libraries +"\n"
                         + "export STEAM_COMPAT_DATA_PATH=\"" + rutawine + "\"\n"
-                        + "\n"
-                        + "# This command changes to the root directory containing the windows .exe file you want to run. This is important\n"
-                        + "# as all calls the .exe makes are relative to this path! (note the linux path format)\n"
                         + "cd \"" + rutajuego + "\"\n"
-                        + "\n"
-                        + "# The final line actually executes the target exe. Steam typically uses the waitforexitandrun option when calling \n"
-                        + "# the script but 'run' should work fine aswell. Note: The example below shows that you can call with command line\n"
-                        + "# options just like a normal windows call.\n"
-                        + "\n"
-                        + "#python3 $PROTON run \"InfiltratorDemo.exe\" \"-d3d12 -ResX=1440 -ResY=900 -FullscreenMode=1 -Fullscreen\"\n"
-                        + "python3 $PROTON waitforexitandrun \"" + nombrearchivo + "\" \"-d3d12 -FullscreenMode=1 -Fullscreen\"");
+                        + vrgame + "python3 $PROTON waitforexitandrun \"" + nombrearchivo + "\" \"-d3d12 -FullscreenMode=1 -Fullscreen\""
+                );
                 myWriter.close();
             } catch (IOException ex) {
                 Logger.getLogger(FrmMain.class.getName()).log(Level.SEVERE, null, ex);
@@ -388,6 +370,8 @@ public class FrmMain extends javax.swing.JFrame {
     private javax.swing.JButton bcancelar;
     private javax.swing.JButton bprotonpath;
     private javax.swing.JButton bwinepath;
+    private javax.swing.JComboBox<String> cLibraries;
+    private javax.swing.JCheckBox cVrGame;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
