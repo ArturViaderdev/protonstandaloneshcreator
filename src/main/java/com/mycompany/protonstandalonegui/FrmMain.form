@@ -178,9 +178,10 @@
     <Component class="javax.swing.JComboBox" name="cLibraries">
       <Properties>
         <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.editors2.ComboBoxModelEditor">
-          <StringArray count="2">
-            <StringItem index="0" value="Steam Libraries"/>
-            <StringItem index="1" value="System Libraries"/>
+          <StringArray count="3">
+            <StringItem index="0" value="Proton Libraries"/>
+            <StringItem index="1" value="Steam Libraries"/>
+            <StringItem index="2" value="System Libraries"/>
           </StringArray>
         </Property>
       </Properties>
