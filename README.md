@@ -12,7 +12,7 @@ Con **Proton GE 11.1** modificado (que se puede descargar de www.magictoolsweb.c
 
 ## Configuración recomendada
 
-Después de crear el prefijo, conviene revisar `dosdevices` y eliminar las unidades que expongan el sistema, especialmente `Z:`, que en Proton suele apuntar a la raíz del sistema de archivos [web:137][web:169]. Para mejorar el aislamiento, podemos crear enlaces simbólicos solo a las rutas que queramos exponer, por ejemplo una carpeta vacía o una ruta controlada como `/media/monta`, donde monto mis ISOs.
+Después de crear el prefijo, conviene revisar `dosdevices` y eliminar las unidades que expongan el sistema, especialmente `Z:`, que en Proton suele apuntar a la raíz del sistema de archivos. Para mejorar el aislamiento, podemos crear enlaces simbólicos solo a las rutas que queramos exponer, por ejemplo una carpeta vacía o una ruta controlada como `/media/monta`, donde monto mis ISOs.
 
 ## Esquema de unidades
 
