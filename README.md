@@ -6,7 +6,33 @@ Este programa sirve para crear lanzadores `.sh` para juegos de Windows en Linux 
 
 Existen otros métodos, como Lutris, pero con este sistema se pueden usar las últimas versiones de Proton y, en algunos casos, ejecutar juegos que no funcionan en Lutris. Aun así, también hay juegos que solo funcionan en Lutris.
 
-### Requisitos de uso
+# Novedad en Proton GE 11.1
+
+Con **Proton GE 11.1** modificado (que se puede descargar de www.magictoolsweb.com ya no es necesario crear previamente un prefijo con PlayOnLinux. Basta con indicar una carpeta vacía como `WINEPREFIX` y el prefijo se crea automáticamente al abrir cualquier juego.
+
+## Configuración recomendada
+
+Después de crear el prefijo, conviene revisar `dosdevices` y eliminar las unidades que expongan el sistema, especialmente `Z:`, que en Proton suele apuntar a la raíz del sistema de archivos [web:137][web:169]. Para mejorar el aislamiento, podemos crear enlaces simbólicos solo a las rutas que queramos exponer, por ejemplo una carpeta vacía o una ruta controlada como `/media/monta`, donde monto mis ISOs.
+
+## Esquema de unidades
+
+Una configuración práctica sería:
+
+- `D:` para la carpeta donde están los juegos.
+- `E:` a `Z:` para rutas controladas o vacías, si realmente las necesitas.
+- Sin `Z:` apuntando a `/`, para evitar exposición innecesaria del sistema.
+
+Si quieres que el juego siempre abra los `.exe` desde la carpeta compartida, lo ideal es seleccionar esos ejecutables desde `D:` y no desde la ruta real del sistema.
+
+## Librerías de Proton
+
+En esta configuración conviene dejar activadas las librerías incluidas en Proton desde el desplegable de la herramienta, porque con Proton 11 ya no estamos dependiendo de `steam libs` como base. Esto simplifica el entorno y evita mezclar rutas del sistema con rutas de Steam cuando no es necesario.
+
+## Resultado esperado
+
+Con este enfoque, los juegos arrancan desde un prefijo limpio, usan las librerías incluidas en Proton y solo ven las unidades que nosotros les expongamos. Además, reducimos bastante el acceso al sistema al eliminar la unidad `Z:` y dejar únicamente carpetas controladas.
+
+### Requisitos de uso antiguos para proton 10.34 y anteriores
 
 Para utilizarlo necesitas:
 
