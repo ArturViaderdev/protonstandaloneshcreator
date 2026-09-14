@@ -9,6 +9,9 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JFileChooser;
@@ -81,6 +84,7 @@ public class FrmMain extends javax.swing.JFrame {
         bwinepath = new javax.swing.JButton();
         cLibraries = new javax.swing.JComboBox<>();
         cVrGame = new javax.swing.JCheckBox();
+        cDesktopShortcut = new javax.swing.JCheckBox();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -129,6 +133,8 @@ public class FrmMain extends javax.swing.JFrame {
 
         cVrGame.setText("VR Game WiVRN");
 
+        cDesktopShortcut.setText("Crear acceso directo escritorio");
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -159,6 +165,8 @@ public class FrmMain extends javax.swing.JFrame {
                 .addComponent(bcancelar)
                 .addGap(48, 48, 48)
                 .addComponent(baceptar)
+                .addGap(109, 109, 109)
+                .addComponent(cDesktopShortcut)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(cVrGame)
@@ -197,7 +205,9 @@ public class FrmMain extends javax.swing.JFrame {
                             .addComponent(baceptar)))
                     .addGroup(layout.createSequentialGroup()
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(cVrGame)))
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(cVrGame)
+                            .addComponent(cDesktopShortcut))))
                 .addContainerGap(24, Short.MAX_VALUE))
         );
 
@@ -225,42 +235,42 @@ public class FrmMain extends javax.swing.JFrame {
         rutaproton = tprotonpath.getText();
         rutawine = twinepath.getText();
         String libraries;
-        String detectSteam="";
+        String detectSteam = "";
+
         if (cLibraries.getSelectedIndex() == 2) {
             libraries = "export LD_LIBRARY_PATH=\"/usr/lib64/wine:/usr/lib32/wine:/usr/lib/x86_64-linux-gnu:/usr/lib/i386-linux-gnu\"";
-        } else if(cLibraries.getSelectedIndex() == 1)   {
-            libraries = "export LD_LIBRARY_PATH=\"$LD_LIBRARY_PATH:/home/$USER/$STEAM_HOME_DIR/ubuntu12_32/steam-runtime/pinned_libs_32:/home/$USER/$STEAM_HOME_DIR/ubuntu12_32/steam-runtime/pinned_libs_64:/usr/lib64/qt-3.3/lib:/usr/lib64/tcl8.6:/usr/lib/wine:/usr/lib64/wine:/lib:/lib64:/home/$USER/$STEAM_HOME_DIR/ubuntu12_32/steam-runtime/lib/i386-linux-gnu:/home/$USER/$STEAM_HOME_DIR/ubuntu12_32/steam-runtime/usr/lib/i386-linux-gnu:/home/$USER/$STEAM_HOME_DIR/ubuntu12_32/steam-runtime/lib/x86_64-linux-gnu:/home/$USER/$STEAM_HOME_DIR/ubuntu12_32/steam-runtime/usr/lib/x86_64-linux-gnu:/home/$USER/$STEAM_HOME_DIR/ubuntu12_32/steam-runtime/lib:/home/$USER/$STEAM_HOME_DIR/ubuntu12_32/steam-runtime/usr/lib:\"\n";
+        } else if (cLibraries.getSelectedIndex() == 1) {
+            libraries = "export LD_LIBRARY_PATH=\"$STEAM_HOME_DIR/ubuntu12_32/steam-runtime/pinned_libs_64:$STEAM_HOME_DIR/ubuntu12_32/steam-runtime/pinned_libs_32:$LD_LIBRARY_PATH\"\n";
             detectSteam = "if [ -d \"$HOME/.steam/steam/ubuntu12_32/steam-runtime\" ]; then\n"
-                        + "    STEAM_HOME_DIR=\".steam/steam\"\n"
-                        + "    echo \"Using Steam directory: $HOME/$STEAM_HOME_DIR\"\n"
-                        + "elif [ -d \"$HOME/.steam/debian-installation/ubuntu12_32/steam-runtime\" ]; then\n"
-                        + "    STEAM_HOME_DIR=\".steam/debian-installation\"\n"
-                        + "    echo \"Using Steam directory: $HOME/$STEAM_HOME_DIR\"\n"
-                        + "elif [ -d \"$HOME/.local/share/Steam/ubuntu12_32/steam-runtime\" ]; then\n"
-                        + "    STEAM_HOME_DIR=\".local/share/Steam\"\n"
-                        + "    echo \"Using Steam directory: $HOME/$STEAM_HOME_DIR\"\n"
-                        + "else\n"
-                        + "    echo \"Steam runtime not found\"\n"
-                        + "    exit 1\n"
-                        + "fi";
-        }
-        else
-        {
-            libraries="export LD_LIBRARY_PATH=\"./files/lib\"";
+                    + "    STEAM_HOME_DIR=\".steam/steam\"\n"
+                    + "    echo \"Using Steam directory: $HOME/$STEAM_HOME_DIR\"\n"
+                    + "elif [ -d \"$HOME/.steam/debian-installation/ubuntu12_32/steam-runtime\" ]; then\n"
+                    + "    STEAM_HOME_DIR=\".steam/debian-installation\"\n"
+                    + "    echo \"Using Steam directory: $HOME/$STEAM_HOME_DIR\"\n"
+                    + "elif [ -d \"$HOME/.local/share/Steam/ubuntu12_32/steam-runtime\" ]; then\n"
+                    + "    STEAM_HOME_DIR=\".local/share/Steam\"\n"
+                    + "    echo \"Using Steam directory: $HOME/$STEAM_HOME_DIR\"\n"
+                    + "else\n"
+                    + "    echo \"Steam runtime not found\"\n"
+                    + "    exit 1\n"
+                    + "fi";
+        } else {
+            libraries = "export LD_LIBRARY_PATH=\"./files/lib\"";
         }
         String vrgame;
-        if(cVrGame.isSelected())
-        {
-            vrgame="PRESSURE_VESSEL_IMPORT_OPENXR_1_RUNTIMES=1 ";
-        }
-        else
-        {
-            vrgame="";
+        if (cVrGame.isSelected()) {
+            vrgame = "PRESSURE_VESSEL_IMPORT_OPENXR_1_RUNTIMES=1 ";
+        } else {
+            vrgame = "";
         }
         if (!rutajuego.isEmpty() && !nombrearchivo.isEmpty() && !rutaproton.isEmpty() && !rutawine.isEmpty()) {
             try {
                 // TODO add your handling code here:
                 FileWriter myWriter = new FileWriter(rutaproton + "/" + Metodos.quitaextension(nombrearchivo) + ".sh");
+                if (cDesktopShortcut != null && cDesktopShortcut.isSelected()) {
+                    myWriter.write("#!/usr/bin/env bash\n");
+                    myWriter.write("cd \"$(dirname \"$0\")\"\n");
+                }
                 myWriter.write("PROTON=$PWD/proton\n"
                         + "\n"
                         + "# Uncomment these options as required. Note: DXVK / D9VK is enabled by default and does not need any of the\n"
@@ -278,19 +288,100 @@ public class FrmMain extends javax.swing.JFrame {
                         + "#export PROTON_FORCE_LARGE_ADDRESS_AWARE=\"1\"\n"
                         + "#export PROTON_OLD_GL_STRING=\"1\"\n"
                         + "\n"
-                        + detectSteam 
+                        + detectSteam
                         + "\n"
                         + "#These 4 exports are NOT required for Joypad support but they are set by Steam so there is no harm in having them set here\n"
                         + "export SDL_GAMECONTROLLERCONFIG=\"03000000de280000ff11000001000000,Steam Virtual Gamepad,a:b0,b:b1,back:b6,dpdown:h0.4,dpleft:h0.8,dpright:h0.2,dpup:h0.1,guide:b8,leftshoulder:b4,leftstick:b9,lefttrigger:a2,leftx:a0,lefty:a1,rightshoulder:b5,rightstick:b10,righttrigger:a5,rightx:a3,righty:a4,start:b7,x:b2,y:b3,03000000de280000fc11000001000000,Steam Controller,a:b0,b:b1,back:b6,dpdown:h0.4,dpleft:h0.8,dpright:h0.2,dpup:h0.1,guide:b8,leftshoulder:b4,leftstick:b9,lefttrigger:a2,leftx:a0,lefty:a1,rightshoulder:b5,rightstick:b10,righttrigger:a5,rightx:a3,righty:a4,start:b7,x:b2,y:b3,030000005e040000a102000007010000,X360 Wireless Controller,a:b0,b:b1,back:b6,dpdown:b14,dpleft:b11,dpright:b12,dpup:b13,guide:b8,leftshoulder:b4,leftstick:b9,lefttrigger:a2,leftx:a0,lefty:a1,rightshoulder:b5,rightstick:b10,righttrigger:a5,rightx:a3,righty:a4,start:b7,x:b2,y:b3,0000000058626f782047616d65706100,XInput Controller,a:b0,b:b1,back:b6,dpdown:h0.4,dpleft:h0.8,dpright:h0.2,dpup:h0.1,guide:b8,leftshoulder:b4,leftstick:b9,lefttrigger:a2,leftx:a0,lefty:a1,rightshoulder:b5,rightstick:b10,righttrigger:a5,rightx:a3,righty:a4,start:b7,x:b2,y:b3,030000005e0400008e02000010010000,X360 Controller,a:b0,b:b1,back:b6,dpdown:h0.4,dpleft:h0.8,dpright:h0.2,dpup:h0.1,guide:b8,leftshoulder:b4,leftstick:b9,lefttrigger:a2,leftx:a0,lefty:a1,rightshoulder:b5,rightstick:b10,righttrigger:a5,rightx:a3,righty:a4,start:b7,x:b2,y:b3,\"\n"
                         + "export SDL_GAMECONTROLLER_ALLOW_STEAM_VIRTUAL_GAMEPAD=\"1\"\n"
                         + "export SDL_GAMECONTROLLER_USE_BUTTON_LABELS=\"1\"\n"
                         + "export SDL_VIDEO_X11_DGAMOUSE=\"0\"\n"
-                        + libraries +"\n"
+                        + libraries + "\n"
                         + "export STEAM_COMPAT_DATA_PATH=\"" + rutawine + "\"\n"
                         + "cd \"" + rutajuego + "\"\n"
                         + vrgame + "python3 $PROTON waitforexitandrun \"" + nombrearchivo + "\" \"-d3d12 -FullscreenMode=1 -Fullscreen\""
                 );
                 myWriter.close();
+
+                // --- Generar acceso directo en el escritorio con icono del exe ---
+                if (cDesktopShortcut != null && cDesktopShortcut.isSelected()) {
+                    try {
+                        String gameExePath = truta.getText();              // ruta completa al .exe
+                        String scriptPath = rutaproton + "/" + Metodos.quitaextension(nombrearchivo) + ".sh";
+                        String gameName = Metodos.quitaextension(nombrearchivo);
+
+                        new ProcessBuilder("chmod", "+x", scriptPath).start().waitFor();
+
+                        // Directorios
+                        String home = System.getProperty("user.home");
+                        String desktopDir = Paths.get(home, "Escritorio").toString();
+                        // Si no existe "Escritorio", probar "Desktop"
+                        File d = new File(desktopDir);
+                        if (!d.exists()) {
+                            desktopDir = Paths.get(home, "Desktop").toString();
+                        }
+
+                        String iconsDir = Paths.get(home, ".local", "share", "icons", "proton-games").toString();
+                        new File(iconsDir).mkdirs();
+
+                        String iconPng = Paths.get(iconsDir, gameName + ".png").toString();
+
+                        // Extraer icono del exe con icoutools (wrestool + icotool)
+                        // 1) wrestool -x -t 14 --output-dir=/tmp/proton-icons-<pid> game.exe
+                        String tmpDir = Paths.get("/tmp", "proton-icons-" + ProcessHandle.current().pid()).toString();
+                        new File(tmpDir).mkdirs();
+
+                        ProcessBuilder pbWres = new ProcessBuilder(
+                                "wrestool", "-x", "-t", "14", "-o", tmpDir, gameExePath
+                        );
+                        pbWres.inheritIO();
+                        int r1 = pbWres.start().waitFor();
+
+                        if (r1 == 0) {
+                            // 2) icotool -x -o icon.png /tmp/proton-icons-*/<algo>.ico
+                            // Cogemos el primer .ico que haya en tmpDir
+                            File[] icos = new File(tmpDir).listFiles((dir, name) -> name.toLowerCase().endsWith(".ico"));
+                            if (icos != null && icos.length > 0) {
+                                ProcessBuilder pbIco = new ProcessBuilder(
+                                        "icotool", "-x", "-o", iconPng, icos[0].getAbsolutePath()
+                                );
+                                pbIco.inheritIO();
+                                pbIco.start().waitFor();
+                            }
+                        }
+
+                        // Si no se pudo extraer icono, dejar iconPng vacío o usar uno genérico
+                        String iconField = new File(iconPng).exists() ? iconPng : "";
+
+                        // 3) Crear archivo .desktop
+                        String desktopPath = Paths.get(desktopDir, gameName + ".desktop").toString();
+
+                        StringBuilder sb = new StringBuilder();
+                        sb.append("[Desktop Entry]\n");
+                        sb.append("Type=Application\n");
+                        sb.append("Name=").append(gameName).append("\n");
+                        sb.append("Exec=").append(scriptPath).append("\n");
+                        if (!iconField.isEmpty()) {
+                            sb.append("Icon=").append(iconField).append("\n");
+                        }
+                        sb.append("Terminal=false\n");
+
+                        Files.writeString(Path.of(desktopPath), sb.toString());
+
+                        // 4) chmod +x al .desktop
+                        new ProcessBuilder("chmod", "+x", desktopPath).start().waitFor();
+
+                    } catch (Exception ex) {
+                        // Si falla algo del icono o del .desktop, al menos avisamos pero no tiramos todo
+                        JOptionPane.showMessageDialog(
+                                this,
+                                "Desktop shortcut creation failed:\n" + ex.getMessage(),
+                                "Warning",
+                                JOptionPane.WARNING_MESSAGE
+                        );
+                    }
+                }
+// ----------------------------------------------------------------
+
             } catch (IOException ex) {
                 Logger.getLogger(FrmMain.class.getName()).log(Level.SEVERE, null, ex);
             }
@@ -376,6 +467,7 @@ public class FrmMain extends javax.swing.JFrame {
     private javax.swing.JButton bcancelar;
     private javax.swing.JButton bprotonpath;
     private javax.swing.JButton bwinepath;
+    private javax.swing.JCheckBox cDesktopShortcut;
     private javax.swing.JComboBox<String> cLibraries;
     private javax.swing.JCheckBox cVrGame;
     private javax.swing.JLabel jLabel1;
